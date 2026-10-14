@@ -48,6 +48,8 @@ export default async function EditPost({
                   ends_local: event.ends_at ? local(event.ends_at) : "",
                   timezone: event.timezone,
                   location: event.location,
+                  capacity: event.capacity,
+                  lifecycle: event.status,
                 }
               : undefined
           }

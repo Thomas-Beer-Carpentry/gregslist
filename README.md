@@ -2,7 +2,7 @@
 
 A private community noticeboard. [Master brief](PROJECT_BRIEF.md) · [Architecture](docs/architecture.md) · [Setup](docs/setup.md).
 
-Phase 2 adds the chronological noticeboard, seven post types, search and filters, owner-managed posts and comments, private photos, saved posts and an upcoming-events sidebar. Invitation-only membership remains enforced. Basic event dates and locations are supported; RSVPs/capacity and ride coordination remain later phases.
+Phases 1–3 provide the private chronological noticeboard, seven post types, search and filters, owner-managed content, private photos and saved posts. Events include capacity-safe RSVPs, member-visible attendee lists, cancellation/completion/archiving and private in-app event updates. Invitation-only membership remains enforced. Ride coordination is Phase 4. See [Phase 3 validation](docs/phase-3-validation.md).
 
 ```sh
 npm ci

@@ -476,3 +476,41 @@ progress {
     padding: 12px;
   }
 }
+.attendee-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+.attendee-columns h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.attendee-columns ul {
+  padding-left: 20px;
+}
+.attendee-columns li {
+  overflow-wrap: anywhere;
+}
+.attendance-count {
+  margin-bottom: 8px;
+}
+.rsvp-form {
+  margin-top: 20px;
+}
+.event-update h2 {
+  overflow-wrap: anywhere;
+  font-size: 20px;
+}
+.status-completed {
+  color: var(--text-muted);
+}
+@media (max-width: 640px) {
+  .attendee-columns {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .rsvp-form .button {
+    padding: 10px 14px;
+  }
+}

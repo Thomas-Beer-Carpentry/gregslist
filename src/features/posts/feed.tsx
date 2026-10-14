@@ -7,6 +7,7 @@ import {
   POST_TYPES,
   STATUSES,
   label,
+  statusLabel,
   formatDate,
   type PostRow,
   type Category,
@@ -193,7 +194,7 @@ export async function Feed({
               <div className="row">
                 <span className="badge">{label(post.post_type)}</span>
                 <span className={`badge status-${post.status}`}>
-                  {label(post.status)}
+                  {statusLabel(post.status, post.post_type)}
                 </span>
                 {saved.some((s) => s.post_id === post.id) && (
                   <span className="muted">Saved</span>

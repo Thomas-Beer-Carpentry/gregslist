@@ -29,7 +29,7 @@ The first production administrator must be provisioned by a trusted operator: cr
 - `npm test` (real local Auth/API/database integration, disposable test users)
 - Browser tests documented with the test configuration.
 
-No production migrations, deployment, push or publication are performed by these scripts. Direct table writes remain denied. Phase 2 noticeboard mutations use owner-checked RPCs; RSVP/ride/partner writes remain denied until their later transactional APIs exist.
+No production migrations, deployment, push or publication are performed by these scripts. Direct table writes remain denied. Phase 2 noticeboard mutations use owner-checked RPCs; Phase 3 RSVP changes use the capacity-safe set_event_rsvp RPC. Direct RSVP writes and all ride/partner writes remain denied.
 
 `npm run db:test` runs the migration/security contract checks. `npm run test:e2e` uses /usr/bin/chromium by default (override CHROMIUM_PATH on other machines); run local bootstrap first. The tests cover private-route redirects, mobile overflow, sign-in, profile editing, admin access, logout, invitation email delivery/acceptance, token reuse denial and password recovery. Additional Auth/API tests exercise concurrent invitation redemption and storage privacy.
 
@@ -45,4 +45,9 @@ Uploads use the existing server-only Supabase credential. No additional external
 
 Deleting a photo/post immediately removes member access. Storage removal follows the database transaction; if it fails, a private photo_cleanup record persists. Run `npm run photos:cleanup` to retry up to 100 queued objects; repeat until the queue is empty. Production should schedule this retry as part of deployment. Do not print private object paths.
 
-Phase 2 has additive migrations; use npm run db:migrate on an existing checkout. Do not reset existing development data to apply updates.
+Phases 2–3 have additive migrations; use npm run db:migrate on an existing checkout. Do not reset existing development data to apply updates.
+
+
+## Event updates
+
+Apply migration 202610140004_events.sql locally with `npm run db:migrate`. It adds RSVP cancellation history and timestamps, Completed event status, and private event-update messages. Legacy event Fulfilled statuses become Completed. No extra environment variables or notification provider are needed. Event updates are available to their recipients at `/notifications`; email/push delivery is not enabled.

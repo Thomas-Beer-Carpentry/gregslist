@@ -25,7 +25,7 @@ PROJECT_BRIEF.md is the product source of truth. Next.js App Router handles SSR 
 4. Rides: exact checkbox, multiple offers, mutually confirmed partners, atomic booking/switching/cancellation, concurrency tests and required notifications.
 5. Reliability: remaining notifications and administration, moderation, accessibility, full browser journeys and deployment review.
 
-No feature is complete until its security and critical workflow tests pass. Direct table mutations remain denied. Phase 2 exposes owner-checked PostgreSQL APIs for posts, comments, saved posts and photo metadata. Future RSVP/ride/partner migrations must add transactional APIs and invariants before enabling their writes.
+No feature is complete until its security and critical workflow tests pass. Direct table mutations remain denied. Phase 2 exposes owner-checked PostgreSQL APIs for posts, comments, saved posts and photo metadata. Phase 3 adds transactional event attendance and lifecycle APIs. Ride/partner migrations must add transactional APIs and invariants before enabling their writes.
 
 ## Phase 2 decisions
 
@@ -35,3 +35,15 @@ No feature is complete until its security and critical workflow tests pass. Dire
 - Owners can edit/delete their posts and comments; administrators can delete posts/comments for moderation. Cancelled/archived posts close comments. Posts with existing RSVPs or ride offers reject generic edit/delete until coordinated lifecycle APIs are implemented.
 - Deletion removes the post, comments, saved references, basic event row and photo metadata in one transaction. Photo bytes are removed synchronously afterward. Failures are persisted in a private cleanup queue, with an idempotent retry command. Queued/deleted objects cannot be downloaded or reattached. Production scheduling of retry cleanup is deployment work.
 - No new public access, registration path, engagement ranking or external service was added.
+
+
+## Phase 3 decisions
+
+- Optional capacity is a positive integer; blank means unlimited. Only active members with an uncancelled Going response consume places, including the organiser if they RSVP. Maybe and Not Going consume none. The organiser is not automatically attending. There is no waitlist.
+- RSVP identity comes from Auth, never a submitted user ID. A membership share lock precedes the parent-post lock; RSVP changes, capacity changes and cancellation serialize on that parent. A failed change preserves the existing response and all event fields. Capacity cannot be reduced below current Going attendance. Revoking membership cancels attendance; later restoration requires a new RSVP.
+- Active members can see display names and all responses. Emails are not included. This group-visible attendance is a privacy assumption; changing it requires coordinated RLS/API/UI changes. Cancelled responses retain their original values and timestamps in the database, but are excluded from active lists. Members see their own cancelled response. This is not a full audit ledger of every previous change.
+- Going/Maybe close at the start instant; a scheduled event still allows withdrawal afterward. Cancelled, completed and archived events close all responses. Existing event instants/timezones and daylight-saving validation remain intact.
+- Cancellation requires an explicit confirmation. It cancels active attendance, related open rides and active reservations transactionally. Reopening starts fresh attendance and does not restore rides. Completed is terminal; create a new event to repeat it. Future scheduled events must be cancelled or completed before archiving; past scheduled events archive as completed. Historical events remain accessible and leave the upcoming sidebar.
+- Events with RSVP history cannot be hard deleted; cancel/archive them instead. A later retention/account-deletion policy must explicitly address this history. The additive migration maps legacy event Fulfilled statuses to Completed without deleting content.
+- Meaningful event changes notify current Going/Maybe members, excluding the editor. Cancellation also notifies affected drivers/passengers. Reopening notifies previously event-cancelled Going/Maybe respondents. Repeating unchanged saves creates no notification. Notifications are recipient-only, in-app, latest 50, with idempotent mark-read; broader notifications/preferences remain Phase 5.
+- Existing ride arrangements block general edits until Phase 4 coordinates those changes. Event cancellation already handles the database cancellation bridge; no ride/partner mutation API is enabled in this phase.

@@ -230,6 +230,7 @@ test("event posts atomically create their extension and cancelled events stay ou
         content: content({
           post_type: "event",
           status: "cancelled",
+          confirm_cancel: true,
           starts_at: "2030-01-01T01:00:00Z",
           event_location: "The park",
           timezone: "Pacific/Auckland",

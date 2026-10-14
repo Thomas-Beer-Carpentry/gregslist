@@ -9,7 +9,7 @@ export async function NoticeboardShell({
   session,
 }: {
   children: React.ReactNode;
-  active?: "feed" | "saved" | "events";
+  active?: "feed" | "saved" | "events" | "updates";
   session: Awaited<ReturnType<typeof requireMember>>;
 }) {
   const { db, user, membership } = session;
@@ -48,6 +48,12 @@ export async function NoticeboardShell({
             aria-current={active === "saved" ? "page" : undefined}
           >
             Saved posts
+          </Link>
+          <Link
+            href="/notifications"
+            aria-current={active === "updates" ? "page" : undefined}
+          >
+            Event updates
           </Link>
           {membership.role === "admin" && (
             <Link href="/admin">Administration</Link>

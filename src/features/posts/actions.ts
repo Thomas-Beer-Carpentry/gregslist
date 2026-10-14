@@ -56,6 +56,21 @@ export async function savePost(
     return { error: "Invalid post." };
   const content: Record<string, unknown> = { ...parsed.data };
   if (parsed.data.post_type === "event") {
+    const capacityText = String(form.get("capacity") || "").trim();
+    const capacity = capacityText ? Number(capacityText) : null;
+    if (
+      capacityText &&
+      (!/^\d+$/.test(capacityText) ||
+        !Number.isInteger(capacity) ||
+        capacity! < 1 ||
+        capacity! > 2147483647)
+    )
+      return {
+        error:
+          "Capacity must be a positive whole number, or leave it blank for unlimited.",
+      };
+    content.capacity = capacity;
+    content.confirm_cancel = form.get("confirm_cancel") === "yes";
     const zone = String(form.get("timezone") || "Pacific/Auckland");
     const location = String(form.get("event_location") || "").trim();
     if (!location || location.length > 300)
@@ -89,6 +104,16 @@ export async function savePost(
     target_id: rawId || null,
     content,
   });
+  if (
+    error &&
+    [
+      "Capacity cannot be lower",
+      "Confirm event cancellation",
+      "Completed events cannot",
+      "Cancel or complete an upcoming",
+    ].some((text) => error.message.startsWith(text))
+  )
+    return { error: error.message + "." };
   if (error)
     return {
       error: error.message.includes("arrangements")

@@ -7,7 +7,13 @@ export const POST_TYPES = [
   "announcement",
   "discussion",
 ] as const;
-export const STATUSES = ["open", "fulfilled", "cancelled", "archived"] as const;
+export const STATUSES = [
+  "open",
+  "fulfilled",
+  "cancelled",
+  "completed",
+  "archived",
+] as const;
 export type PostType = (typeof POST_TYPES)[number];
 export type PostRow = {
   id: string;
@@ -32,6 +38,7 @@ export type EventRow = {
   timezone: string;
   location: string;
   status: string;
+  capacity: number | null;
 };
 export type FormState = { error: string };
 export function label(value: string) {
@@ -60,4 +67,8 @@ export function formatDate(
       ) + " UTC"
     );
   }
+}
+
+export function statusLabel(status: string, kind: string) {
+  return kind === "event" && status === "open" ? "Scheduled" : label(status);
 }

@@ -1,0 +1,13 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select plan(8);
+select ok(not has_table_privilege('authenticated','public.event_rsvps','insert'),'RSVP inserts require the capacity-safe function');
+select ok(not has_table_privilege('authenticated','public.event_rsvps','update'),'Members cannot forge another attendee response');
+select ok(not has_function_privilege('anon','public.set_event_rsvp(uuid,text)','execute'),'Anonymous users cannot RSVP');
+select ok(not has_function_privilege('anon','public.event_attendance(uuid)','execute'),'Anonymous users cannot list attendees');
+select ok(not has_table_privilege('authenticated','public.events','update'),'Capacity and lifecycle cannot bypass event rules');
+select ok(not has_function_privilege('authenticated','private.going_count(uuid)','execute'),'Private counting helper is not publicly callable');
+select ok(not has_function_privilege('anon','public.read_notification(uuid)','execute'),'Anonymous users cannot change event updates');
+select ok(not has_table_privilege('authenticated','public.notifications','update'),'Notification reads require recipient authorization');
+select * from finish();
+rollback;

@@ -5,6 +5,7 @@ import {
   POST_TYPES,
   STATUSES,
   label,
+  statusLabel,
   type Category,
   type PostRow,
 } from "./model";
@@ -14,6 +15,8 @@ type InitialEvent = {
   ends_local: string;
   timezone: string;
   location: string;
+  capacity: number | null;
+  lifecycle: string;
 };
 export function PostForm({
   categories,
@@ -26,6 +29,7 @@ export function PostForm({
 }) {
   const [kind, setKind] = useState(post?.post_type || "discussion");
   const [state, action] = useActionState(savePost, { error: "" });
+  const [confirmCancel, setConfirmCancel] = useState(false);
   // React resets uncontrolled action forms after a result, including validation
   // errors. Controlled values preserve the member's work when correction is needed.
   const [values, setValues] = useState({
@@ -40,6 +44,7 @@ export function PostForm({
     ends_local: event?.ends_local || "",
     timezone: event?.timezone || "Pacific/Auckland",
     event_location: event?.location || "",
+    capacity: event?.capacity?.toString() || "",
   });
   function field(name: keyof typeof values) {
     return {
@@ -78,7 +83,10 @@ export function PostForm({
               onChange={(e) => {
                 const value = e.target.value as typeof kind;
                 setKind(value);
-                if (value === "event" && values.status === "fulfilled")
+                if (
+                  (value === "event" && values.status === "fulfilled") ||
+                  (value !== "event" && values.status === "completed")
+                )
                   setValues((v) => ({ ...v, status: "open" }));
               }}
             >
@@ -154,6 +162,20 @@ export function PostForm({
               />
             </div>
           </div>
+          <label htmlFor="capacity">Attendance capacity (optional)</label>
+          <input
+            id="capacity"
+            name="capacity"
+            type="number"
+            inputMode="numeric"
+            min="1"
+            max="2147483647"
+            {...field("capacity")}
+          />
+          <p className="muted">
+            Leave blank for unlimited attendance. Only Going uses a place,
+            including the organiser if they RSVP.
+          </p>
           <label htmlFor="timezone">Timezone</label>
           <input
             id="timezone"
@@ -208,14 +230,42 @@ export function PostForm({
       )}
       <label htmlFor="status">Status</label>
       <select id="status" name="status" {...field("status")}>
-        {STATUSES.filter((s) => kind !== "event" || s !== "fulfilled").map(
-          (s) => (
-            <option key={s} value={s}>
-              {label(s)}
-            </option>
-          ),
-        )}
+        {STATUSES.filter((s) =>
+          kind === "event"
+            ? s !== "fulfilled" &&
+              (event?.lifecycle !== "completed" ||
+                ["completed", "archived"].includes(s))
+            : s !== "completed",
+        ).map((s) => (
+          <option key={s} value={s}>
+            {statusLabel(s, kind)}
+          </option>
+        ))}
       </select>
+      {kind === "event" &&
+        post &&
+        values.status === "cancelled" &&
+        post.status !== "cancelled" && (
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="confirm_cancel"
+              value="yes"
+              required
+              checked={confirmCancel}
+              onChange={(e) => setConfirmCancel(e.target.checked)}
+            />
+            Cancel this event and its attendance. Members will receive an event
+            update.
+          </label>
+        )}
+      {kind === "event" &&
+        post?.status === "cancelled" &&
+        values.status === "open" && (
+          <p className="message">
+            Reopening starts fresh attendance. Members must RSVP again.
+          </p>
+        )}
       <SubmitButton>{post ? "Save changes" : "Publish post"}</SubmitButton>
     </form>
   );

@@ -229,6 +229,9 @@ test("event forms preserve timezone, reject invalid dates and populate the upcom
     "2030-01-15T18:00",
   );
   await page.getByLabel("Status", { exact: true }).selectOption("cancelled");
+  await page
+    .getByLabel("Cancel this event and its attendance.", { exact: false })
+    .check();
   await page.getByRole("button", { name: "Save changes" }).click();
   await expect(
     page.getByText("Comments are closed on this cancelled post."),

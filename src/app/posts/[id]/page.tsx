@@ -13,7 +13,8 @@ import {
   toggleSaved,
   removePhoto,
 } from "@/features/posts/actions";
-import { formatDate, label } from "@/features/posts/model";
+import { EventAttendance } from "@/features/events/attendance";
+import { formatDate, label, statusLabel } from "@/features/posts/model";
 export const dynamic = "force-dynamic";
 export default async function PostDetail({
   params,
@@ -75,6 +76,15 @@ export default async function PostDetail({
           .in("id", [...new Set(comments.map((c) => c.author_id))])
       ).data || []
     : [];
+  let hasRsvpHistory = false;
+  if (event) {
+    const history = await db
+      .from("event_rsvps")
+      .select("user_id", { count: "exact", head: true })
+      .eq("event_id", id);
+    if (history.error) throw new Error("Event history unavailable");
+    hasRsvpHistory = Boolean(history.count);
+  }
   const own = post.author_id === user.id;
   const canDelete = own || membership.role === "admin";
   const openComments = !["archived", "cancelled"].includes(post.status);
@@ -91,7 +101,7 @@ export default async function PostDetail({
         <div className="row">
           <span className="badge">{label(post.post_type)}</span>
           <span className={`badge status-${post.status}`}>
-            {label(post.status)}
+            {statusLabel(post.status, post.post_type)}
           </span>
         </div>
         <h1>{post.title}</h1>
@@ -183,6 +193,13 @@ export default async function PostDetail({
         ) : null}
         {own && <PhotoUploader postId={id} count={photos?.length || 0} />}
       </article>
+      {event && (
+        <EventAttendance
+          event={event}
+          postStatus={post.status}
+          session={session}
+        />
+      )}
       <section id="comments" className="card">
         <h2>Comments</h2>
         {comments?.length ? (
@@ -251,7 +268,15 @@ export default async function PostDetail({
           </p>
         )}
       </section>
-      {canDelete && (
+      {canDelete && hasRsvpHistory && (
+        <section className="card">
+          <p className="muted">
+            RSVP history is retained. The organiser can cancel or archive this
+            event instead of deleting it.
+          </p>
+        </section>
+      )}
+      {canDelete && !hasRsvpHistory && (
         <section className="card">
           <details>
             <summary>Delete this post</summary>
