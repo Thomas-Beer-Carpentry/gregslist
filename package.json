@@ -14,6 +14,7 @@
     "env:local": "node scripts/local-env.mjs",
     "admin:local": "node scripts/bootstrap-local.mjs",
     "test:e2e": "playwright test",
+    "test:admin-concurrency": "node scripts/test-admin-concurrency.mjs",
     "format:check": "prettier --check src scripts tests playwright.config.ts",
     "db:stop": "node scripts/supabase-local.mjs stop",
     "photos:cleanup": "node scripts/cleanup-photos.mjs",

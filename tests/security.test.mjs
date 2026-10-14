@@ -130,8 +130,12 @@ test("members can read profiles but not invitation records", async () => {
   });
   assert.ifError(invitation.error);
   assert.equal(
-    (await admin.db.from("invitations").select("*").eq("id", invitation.data))
-      .data.length,
+    (
+      await admin.db
+        .from("invitations")
+        .select("id,email")
+        .eq("id", invitation.data)
+    ).data.length,
     1,
   );
   assert.ok(
@@ -139,7 +143,10 @@ test("members can read profiles but not invitation records", async () => {
       (p) => p.id === admin.id,
     ),
   );
-  assert.deepEqual((await member.db.from("invitations").select("*")).data, []);
+  assert.deepEqual(
+    (await member.db.from("invitations").select("id,email")).data,
+    [],
+  );
 });
 test("ordinary members cannot issue invites, revoke others, or elevate their role", async () => {
   assert.ok(

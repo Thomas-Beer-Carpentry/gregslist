@@ -1,0 +1,134 @@
+.administration {
+  max-width: 1080px;
+  margin: 32px auto;
+  padding: 24px;
+}
+.administration h1 {
+  max-width: 760px;
+}
+.admin-section-links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 28px 0;
+}
+.admin-summary div {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 18px 24px;
+}
+.admin-summary dt {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.admin-summary dd {
+  margin: 0;
+  color: var(--forest);
+  font-size: 30px;
+  font-weight: 600;
+}
+.admin-delivery {
+  margin-top: 20px;
+}
+.admin-delivery .checkbox-label {
+  margin: 10px 0;
+}
+.admin-copy-link {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.admin-copy-link textarea {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+.admin-member,
+.admin-invitation,
+.admin-audit-entry {
+  padding: 22px 0;
+  border-top: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+.admin-member:first-child,
+.admin-invitation:first-child,
+.admin-audit-entry:first-child {
+  border-top: 0;
+}
+.admin-member h3,
+.admin-invitation h3,
+.directory-card h2 {
+  margin: 0;
+}
+.admin-member p,
+.admin-invitation p {
+  margin: 8px 0;
+}
+.admin-member-controls {
+  margin-top: 16px;
+}
+.admin-member-controls summary {
+  color: var(--forest);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+}
+.admin-member-controls form {
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+}
+.admin-search {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.admin-search > div {
+  flex: 1 1 220px;
+}
+.admin-search input {
+  margin-bottom: 0;
+}
+.admin-audit {
+  list-style: none;
+  padding: 0;
+}
+.admin-audit-entry p {
+  margin: 4px 0;
+}
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.directory-card {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.directory-card p {
+  white-space: pre-wrap;
+}
+@media (max-width: 640px) {
+  .administration {
+    margin: 12px auto;
+    padding: 20px;
+  }
+  .admin-summary {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .admin-summary div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .directory-grid {
+    grid-template-columns: 1fr;
+  }
+}

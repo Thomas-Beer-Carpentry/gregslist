@@ -100,7 +100,7 @@ test("administrator email invitation, acceptance, password setup and recovery wo
       await request.get(`http://127.0.0.1:54324/api/v1/message/${id}`)
     ).json();
     const link = content.HTML.match(
-      /href="([^"]+\/auth\/callback[^\"]*)"/i,
+      /href="([^"]+\/auth\/(?:callback|confirm)[^\"]*)"/i,
     )?.[1]?.replaceAll("&amp;", "&");
     expect(link).toBeTruthy();
     return link!;
@@ -123,6 +123,9 @@ test("administrator email invitation, acceptance, password setup and recovery wo
     await expect(page.getByRole("status")).toContainText("Invitation sent");
     const link = await emailLink("invitation");
     await invited.goto(link);
+    await invited
+      .getByRole("button", { name: "Verify email", exact: true })
+      .click();
     await expect(
       invited.getByRole("heading", { name: "Choose your password." }),
     ).toBeVisible();
@@ -133,7 +136,12 @@ test("administrator email invitation, acceptance, password setup and recovery wo
     ).toBeVisible();
     await invited.getByRole("button", { name: "Sign out" }).click();
     await invited.goto(link);
-    await expect(invited.getByRole("status")).toContainText("already used");
+    await invited
+      .getByRole("button", { name: "Verify email", exact: true })
+      .click();
+    await expect(invited.locator("main").getByRole("alert")).toContainText(
+      "already used",
+    );
     await invited.goto("/recover");
     await invited.getByLabel("Email", { exact: true }).fill(email);
     await invited.getByRole("button", { name: "Send recovery link" }).click();
@@ -141,6 +149,9 @@ test("administrator email invitation, acceptance, password setup and recovery wo
       "If an account exists",
     );
     await invited.goto(await emailLink("Reset"));
+    await invited
+      .getByRole("button", { name: "Verify recovery link", exact: true })
+      .click();
     await expect(
       invited.getByRole("heading", { name: "Choose your password." }),
     ).toBeVisible();

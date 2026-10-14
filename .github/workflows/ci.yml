@@ -16,8 +16,9 @@ jobs:
       - run: npm run db:start
       - run: node scripts/local-env.mjs
       - run: npm run db:test
-      - run: npm test
       - run: node scripts/bootstrap-local.mjs
+      - run: npm test
+      - run: npm run test:admin-concurrency
       - run: npx playwright install --with-deps chromium
       - run: CHROMIUM_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") npm run test:e2e
       - if: always()

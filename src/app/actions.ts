@@ -2,7 +2,6 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { configured, supabase } from "@/lib/supabase/server";
-import { adminClient } from "@/lib/supabase/admin";
 import { requireMember } from "@/lib/auth";
 const emailSchema = z.email();
 function site() {
@@ -68,56 +67,6 @@ export async function setPassword(form: FormData) {
     );
   redirect("/");
 }
-export async function sendInvite(form: FormData) {
-  const { db } = await requireMember(true);
-  const email = emailSchema.safeParse(form.get("email"));
-  if (!email.success) message("/admin", "Enter a valid email address.");
-  const { data: id, error } = await db.rpc("issue_invitation", {
-    target_email: email.data,
-  });
-  if (error)
-    message(
-      "/admin",
-      "An active invitation may already exist for this address.",
-    );
-  const { error: sendError } = await adminClient().auth.admin.inviteUserByEmail(
-    email.data,
-    { redirectTo: `${site()}/auth/callback` },
-  );
-  if (sendError) {
-    await db.rpc("revoke_invitation", { invitation_id: id });
-    message(
-      "/admin",
-      "The invitation could not be delivered. Its membership invitation has been revoked.",
-    );
-  }
-  message(
-    "/admin",
-    "Invitation sent. It is single-use and expires in seven days; email links may expire sooner.",
-  );
-}
-export async function revokeInvite(form: FormData) {
-  const { db } = await requireMember(true);
-  const id = z.uuid().safeParse(form.get("id"));
-  if (!id.success) message("/admin", "Invalid invitation.");
-  const { error } = await db.rpc("revoke_invitation", {
-    invitation_id: id.data,
-  });
-  if (error) message("/admin", "Could not revoke invitation.");
-  redirect("/admin");
-}
-export async function revokeMember(form: FormData) {
-  const { db } = await requireMember(true);
-  const id = z.uuid().safeParse(form.get("id"));
-  if (!id.success) message("/admin", "Invalid member.");
-  const { error } = await db.rpc("revoke_membership", { target_user: id.data });
-  if (error)
-    message(
-      "/admin",
-      "Could not revoke membership. You cannot revoke yourself.",
-    );
-  redirect("/admin");
-}
 export async function updateProfile(form: FormData) {
   const { db, user } = await requireMember();
   const name = z
@@ -128,9 +77,16 @@ export async function updateProfile(form: FormData) {
     .safeParse(form.get("display_name"));
   if (!name.success)
     message("/settings", "Use a display name between 1 and 80 characters.");
+  const bio = z
+    .string()
+    .trim()
+    .max(300)
+    .safeParse(form.get("bio") || "");
+  if (!bio.success)
+    message("/settings", "Keep your biography to 300 characters.");
   const { error } = await db
     .from("profiles")
-    .update({ display_name: name.data })
+    .update({ display_name: name.data, bio: bio.data })
     .eq("id", user.id);
   if (error) message("/settings", "Could not save your name.");
   message("/settings", "Your display name has been saved.");

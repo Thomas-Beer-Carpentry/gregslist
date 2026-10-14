@@ -14,7 +14,7 @@ export async function requireMember(admin = false) {
     .eq("user_id", user.id)
     .single();
   if (membership?.status !== "active" || (admin && membership.role !== "admin"))
-    redirect("/login?message=Active+membership+is+required");
+    redirect("/access-denied");
   return { db, user, membership };
 }
 export async function memberSession() {

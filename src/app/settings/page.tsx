@@ -11,7 +11,7 @@ export default async function Settings({
   const { db, user } = await requireMember();
   const { data: profile } = await db
     .from("profiles")
-    .select("display_name")
+    .select("display_name,bio")
     .eq("id", user.id)
     .single();
   const { message } = await searchParams;
@@ -35,12 +35,29 @@ export default async function Settings({
             maxLength={80}
             autoComplete="nickname"
           />
+          <label htmlFor="bio">A little about you</label>
+          <textarea
+            id="bio"
+            name="bio"
+            defaultValue={profile?.bio || ""}
+            maxLength={300}
+            rows={4}
+            aria-describedby="bio-help"
+          />
+          <p id="bio-help" className="muted">
+            Optional, up to 300 characters. Your display name and biography are
+            visible to authorised community members. Keep contact details
+            private.
+          </p>
           <SubmitButton>Save name</SubmitButton>
         </form>
         <hr className="divider" />
         <Link href="/settings/password">Change password</Link>
         <p>
           <Link href="/settings/partner">Manage linked partner</Link>
+        </p>
+        <p>
+          <Link href="/members">Meet your community</Link>
         </p>
       </section>
     </main>
