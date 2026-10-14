@@ -29,7 +29,7 @@ The first production administrator must be provisioned by a trusted operator: cr
 - `npm test` (real local Auth/API/database integration, disposable test users)
 - Browser tests documented with the test configuration.
 
-No production migrations, deployment, push or publication are performed by these scripts. Direct table writes remain denied. Phase 2 noticeboard mutations use owner-checked RPCs; Phase 3 RSVP changes use the capacity-safe set_event_rsvp RPC. Direct RSVP writes and all ride/partner writes remain denied.
+No production migrations, deployment, push or publication are performed by these scripts. Direct table writes remain denied. Phase 2 noticeboard mutations use owner-checked RPCs; Phase 3 RSVP changes use the capacity-safe set_event_rsvp RPC. Direct RSVP, ride and partner table writes remain denied. Phase 4 adds authenticated transactional ride/partner RPCs.
 
 `npm run db:test` runs the migration/security contract checks. `npm run test:e2e` uses /usr/bin/chromium by default (override CHROMIUM_PATH on other machines); run local bootstrap first. The tests cover private-route redirects, mobile overflow, sign-in, profile editing, admin access, logout, invitation email delivery/acceptance, token reuse denial and password recovery. Additional Auth/API tests exercise concurrent invitation redemption and storage privacy.
 
@@ -45,9 +45,16 @@ Uploads use the existing server-only Supabase credential. No additional external
 
 Deleting a photo/post immediately removes member access. Storage removal follows the database transaction; if it fails, a private photo_cleanup record persists. Run `npm run photos:cleanup` to retry up to 100 queued objects; repeat until the queue is empty. Production should schedule this retry as part of deployment. Do not print private object paths.
 
-Phases 2–3 have additive migrations; use npm run db:migrate on an existing checkout. Do not reset existing development data to apply updates.
-
+Phases 2–4 have additive migrations; use npm run db:migrate on an existing checkout. Do not reset existing development data to apply updates.
 
 ## Event updates
 
 Apply migration 202610140004_events.sql locally with `npm run db:migrate`. It adds RSVP cancellation history and timestamps, Completed event status, and private event-update messages. Legacy event Fulfilled statuses become Completed. No extra environment variables or notification provider are needed. Event updates are available to their recipients at `/notifications`; email/push delivery is not enabled.
+
+## Ride coordination (Phase 4)
+
+Run `npm run db:migrate` on an existing local checkout to apply `202610140005_ride_coordination.sql`. Do not reset existing data. The migration extends ride/partner tables, adds private idempotency/audit records and capacity constraints, and integrates existing post/event/revocation operations. Legacy return details are retained and marked as available. It does not require new environment variables, providers, payments, email delivery or background workers.
+
+Ride coordination is optional in the post form. Partner linking is under Account settings → Manage linked partner. Relevant ride notifications appear in the existing `/notifications` screen, now labelled Updates. Dates default to Pacific/Auckland and contribution currency defaults to NZD; both are configurable per offer. Return details are informational, not separate seat inventory.
+
+Hosted migration/deployment remains a separate explicitly authorised operation. This phase only applies migrations to the local development database. Existing production Auth/site/SMTP configuration requirements remain unchanged.

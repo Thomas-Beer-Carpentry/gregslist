@@ -21,6 +21,13 @@ export default async function EventUpdates({
       "event_completed",
       "event_archived",
       "event_reopened",
+      "ride_booked",
+      "ride_switched",
+      "ride_updated",
+      "ride_withdrawn",
+      "ride_booking_cancelled",
+      "ride_cancelled",
+      "ride_completed",
     ])
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -30,9 +37,9 @@ export default async function EventUpdates({
   return (
     <NoticeboardShell session={session} active="updates">
       <p className="eyebrow">Keep your plans in sync</p>
-      <h1>Event updates.</h1>
+      <h1>Your updates.</h1>
       <p className="muted">
-        The latest 50 changes to plans you’ve responded to.
+        The latest 50 event and ride updates for your plans.
       </p>
       {message && (
         <p role="status" className="message">
@@ -51,7 +58,7 @@ export default async function EventUpdates({
             <h2>{update.message}</h2>
             <div className="row">
               {update.post_id && (
-                <Link href={`/posts/${update.post_id}`}>View event</Link>
+                <Link href={`/posts/${update.post_id}`}>View post</Link>
               )}
               {!update.read_at && (
                 <form action={readUpdate}>
@@ -65,7 +72,9 @@ export default async function EventUpdates({
       ) : (
         <section className="card">
           <h2>You’re up to date.</h2>
-          <p className="muted">Relevant event changes will appear here.</p>
+          <p className="muted">
+            Relevant event and transport changes will appear here.
+          </p>
         </section>
       )}
     </NoticeboardShell>

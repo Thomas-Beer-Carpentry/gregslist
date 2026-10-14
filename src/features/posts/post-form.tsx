@@ -29,6 +29,10 @@ export function PostForm({
 }) {
   const [kind, setKind] = useState(post?.post_type || "discussion");
   const [state, action] = useActionState(savePost, { error: "" });
+  const [ridesEnabled, setRidesEnabled] = useState(
+    post?.ride_coordination_enabled || false,
+  );
+  const [confirmTransport, setConfirmTransport] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
   // React resets uncontrolled action forms after a result, including validation
   // errors. Controlled values preserve the member's work when correction is needed.
@@ -57,7 +61,12 @@ export function PostForm({
     };
   }
   return (
-    <form action={action} className="post-form">
+    <form
+      action={action}
+      className="post-form"
+      // Action failures must keep checkbox/select choices as well as text fields.
+      onReset={(event) => event.preventDefault()}
+    >
       {state.error && (
         <p className="message" role="alert">
           {state.error}
@@ -228,6 +237,20 @@ export function PostForm({
           />
         </>
       )}
+      <label className="checkbox-label">
+        <input
+          type="checkbox"
+          name="ride_coordination_enabled"
+          value="yes"
+          checked={ridesEnabled}
+          onChange={(e) => setRidesEnabled(e.target.checked)}
+        />
+        People might need a ride for this
+      </label>
+      <p className="muted">
+        Any community member can offer a ride. Active rides and unresolved
+        reservations must be closed before disabling coordination.
+      </p>
       <label htmlFor="status">Status</label>
       <select id="status" name="status" {...field("status")}>
         {STATUSES.filter((s) =>
@@ -265,6 +288,22 @@ export function PostForm({
           <p className="message">
             Reopening starts fresh attendance. Members must RSVP again.
           </p>
+        )}
+      {post?.ride_coordination_enabled &&
+        values.status !== "open" &&
+        values.status !== post.status &&
+        !(kind === "event" && values.status === "cancelled") && (
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              name="confirm_transport_close"
+              value="yes"
+              checked={confirmTransport}
+              onChange={(e) => setConfirmTransport(e.target.checked)}
+            />
+            Close associated ride arrangements. Reservations will be marked
+            completed, or cancelled if this post is cancelled.
+          </label>
         )}
       <SubmitButton>{post ? "Save changes" : "Publish post"}</SubmitButton>
     </form>

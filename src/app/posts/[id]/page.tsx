@@ -13,6 +13,7 @@ import {
   toggleSaved,
   removePhoto,
 } from "@/features/posts/actions";
+import { RideCoordination } from "@/features/rides/coordination";
 import { EventAttendance } from "@/features/events/attendance";
 import { formatDate, label, statusLabel } from "@/features/posts/model";
 export const dynamic = "force-dynamic";
@@ -41,6 +42,7 @@ export default async function PostDetail({
     { data: photos, error: photoError },
     { data: comments, error: commentError },
     { data: saved },
+    { count: rideHistoryCount, error: rideHistoryError },
   ] = await Promise.all([
     db
       .from("profiles")
@@ -66,8 +68,13 @@ export default async function PostDetail({
       .eq("post_id", id)
       .eq("user_id", user.id)
       .maybeSingle(),
+    db
+      .from("ride_offers")
+      .select("id", { count: "exact", head: true })
+      .eq("post_id", id),
   ]);
-  if (photoError || commentError) throw new Error("Post content unavailable");
+  if (photoError || commentError || rideHistoryError)
+    throw new Error("Post content unavailable");
   const commentAuthors = comments?.length
     ? (
         await db
@@ -76,6 +83,7 @@ export default async function PostDetail({
           .in("id", [...new Set(comments.map((c) => c.author_id))])
       ).data || []
     : [];
+  const hasRideHistory = Boolean(rideHistoryCount);
   let hasRsvpHistory = false;
   if (event) {
     const history = await db
@@ -200,6 +208,7 @@ export default async function PostDetail({
           session={session}
         />
       )}
+      <RideCoordination post={post} event={event} session={session} />
       <section id="comments" className="card">
         <h2>Comments</h2>
         {comments?.length ? (
@@ -268,15 +277,16 @@ export default async function PostDetail({
           </p>
         )}
       </section>
-      {canDelete && hasRsvpHistory && (
+      {canDelete && (hasRsvpHistory || hasRideHistory) && (
         <section className="card">
           <p className="muted">
-            RSVP history is retained. The organiser can cancel or archive this
-            event instead of deleting it.
+            {hasRsvpHistory
+              ? "RSVP history is retained. The organiser can cancel or archive this event instead of deleting it."
+              : "Ride history is retained. Close or archive this post instead of deleting its transport records."}
           </p>
         </section>
       )}
-      {canDelete && !hasRsvpHistory && (
+      {canDelete && !hasRsvpHistory && !hasRideHistory && (
         <section className="card">
           <details>
             <summary>Delete this post</summary>

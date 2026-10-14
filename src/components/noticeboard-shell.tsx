@@ -53,7 +53,7 @@ export async function NoticeboardShell({
             href="/notifications"
             aria-current={active === "updates" ? "page" : undefined}
           >
-            Event updates
+            Updates
           </Link>
           {membership.role === "admin" && (
             <Link href="/admin">Administration</Link>

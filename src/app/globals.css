@@ -514,3 +514,50 @@ progress {
     padding: 10px 14px;
   }
 }
+
+.ride-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  overflow-wrap: anywhere;
+}
+.ride-card h3 {
+  margin: 0;
+}
+.ride-card h4 {
+  margin-bottom: 8px;
+}
+.ride-card details,
+.booking-form,
+.ride-management,
+.offer-ride {
+  margin-top: 20px;
+}
+.ride-form {
+  margin-top: 16px;
+}
+.ride-form textarea {
+  min-height: 80px;
+}
+.seat-count {
+  margin: 12px 0;
+}
+.transport-summary {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+  margin: 20px 0;
+}
+.reservation-row,
+.partner-request {
+  padding: 12px 0;
+}
+.passenger-list {
+  padding-left: 20px;
+}
+@media (max-width: 640px) {
+  .ride-card {
+    padding: 14px;
+  }
+}

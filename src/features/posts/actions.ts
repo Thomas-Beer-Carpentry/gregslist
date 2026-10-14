@@ -55,6 +55,10 @@ export async function savePost(
   if (rawId && !idSchema.safeParse(rawId).success)
     return { error: "Invalid post." };
   const content: Record<string, unknown> = { ...parsed.data };
+  content.ride_coordination_enabled =
+    form.get("ride_coordination_enabled") === "yes";
+  content.confirm_transport_close =
+    form.get("confirm_transport_close") === "yes";
   if (parsed.data.post_type === "event") {
     const capacityText = String(form.get("capacity") || "").trim();
     const capacity = capacityText ? Number(capacityText) : null;
@@ -111,6 +115,8 @@ export async function savePost(
       "Confirm event cancellation",
       "Completed events cannot",
       "Cancel or complete an upcoming",
+      "Withdraw active rides",
+      "Confirm closing the associated ride",
     ].some((text) => error.message.startsWith(text))
   )
     return { error: error.message + "." };

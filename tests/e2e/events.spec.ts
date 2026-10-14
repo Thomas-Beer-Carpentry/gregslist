@@ -196,7 +196,7 @@ test("organiser edits cannot evict attendees and private updates can be marked r
   const a = await browser.newPage();
   try {
     await login(a, 1);
-    await a.getByRole("link", { name: "Event updates", exact: true }).click();
+    await a.getByRole("link", { name: "Updates", exact: true }).click();
     const notice = a
       .locator(".event-update")
       .filter({ hasText: `Event updated: ${title} updated` });
@@ -244,7 +244,7 @@ test("cancellation, reopening, completion and archiving preserve history and clo
     await expect(a.locator(".attendance")).toContainText(
       "Your previous Going response was cancelled",
     );
-    await a.getByRole("link", { name: "Event updates", exact: true }).click();
+    await a.getByRole("link", { name: "Updates", exact: true }).click();
     await expect(
       a.getByRole("heading", {
         name: `Event cancelled: ${title}`,
@@ -252,7 +252,7 @@ test("cancellation, reopening, completion and archiving preserve history and clo
       }),
     ).toBeVisible();
     await login(b, 2);
-    await b.getByRole("link", { name: "Event updates", exact: true }).click();
+    await b.getByRole("link", { name: "Updates", exact: true }).click();
     await expect(
       b.getByRole("heading", {
         name: `Event cancelled: ${title}`,

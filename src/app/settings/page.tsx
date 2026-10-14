@@ -39,6 +39,9 @@ export default async function Settings({
         </form>
         <hr className="divider" />
         <Link href="/settings/password">Change password</Link>
+        <p>
+          <Link href="/settings/partner">Manage linked partner</Link>
+        </p>
       </section>
     </main>
   );
