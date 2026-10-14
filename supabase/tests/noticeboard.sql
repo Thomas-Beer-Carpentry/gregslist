@@ -1,0 +1,13 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select plan(8);
+select ok(not has_function_privilege('anon','public.write_post(uuid,jsonb)','execute'),'Anonymous users cannot invoke post mutations');
+select ok(not has_table_privilege('authenticated','public.posts','insert'),'Members cannot bypass post validation');
+select ok(not has_table_privilege('authenticated','public.posts','update'),'Authors and timestamps cannot be forged with direct updates');
+select ok(not has_table_privilege('authenticated','public.comments','update'),'Comment ownership cannot be bypassed');
+select ok(not has_table_privilege('authenticated','public.post_photos','insert'),'Photos cannot bypass server validation');
+select ok(not has_table_privilege('authenticated','public.photo_cleanup','select'),'Cleanup paths remain private');
+select ok(not (select prosecdef from pg_proc where oid='public.noticeboard_feed(text,uuid,text,text,boolean,timestamptz,uuid,integer)'::regprocedure),'Feed runs with caller RLS');
+select ok(not exists(select 1 from pg_policies where schemaname='storage' and tablename='objects' and cmd='INSERT' and 'authenticated'=any(roles)),'Browsers cannot upload unvalidated bytes directly');
+select * from finish();
+rollback;

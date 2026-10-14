@@ -17,3 +17,18 @@ export async function requireMember(admin = false) {
     redirect("/login?message=Active+membership+is+required");
   return { db, user, membership };
 }
+export async function memberSession() {
+  if (!configured()) return null;
+  const db = await supabase();
+  const {
+    data: { user },
+  } = await db.auth.getUser();
+  if (!user) return null;
+  const { data: membership } = await db
+    .from("memberships")
+    .select("role,status")
+    .eq("user_id", user.id)
+    .single();
+  if (membership?.status !== "active") return null;
+  return { db, user, membership };
+}

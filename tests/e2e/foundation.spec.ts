@@ -42,8 +42,8 @@ test("administrator can sign in, edit a display name and sign out", async ({
     ),
   ).toBeTruthy();
   await expect(
-    page.getByRole("button", { name: "Create post" }),
-  ).toBeDisabled();
+    page.getByRole("link", { name: "Create post", exact: true }),
+  ).toBeVisible();
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.getByRole("link", { name: "Account settings" }).click();
   await page.getByLabel("Display name").fill("Greg");

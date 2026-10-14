@@ -15,12 +15,15 @@
     "admin:local": "node scripts/bootstrap-local.mjs",
     "test:e2e": "playwright test",
     "format:check": "prettier --check src scripts tests playwright.config.ts",
-    "db:stop": "node scripts/supabase-local.mjs stop"
+    "db:stop": "node scripts/supabase-local.mjs stop",
+    "photos:cleanup": "node scripts/cleanup-photos.mjs",
+    "db:migrate": "node scripts/supabase-local.mjs migration up"
   },
   "engines": {
     "node": ">=22 <25"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
     "@radix-ui/react-slot": "^1.5.0",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.3",
@@ -31,6 +34,7 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.5",
     "tailwind-merge": "^3.7.0",
     "zod": "^4.6.7"
   },

@@ -273,6 +273,31 @@ test("private photo downloads require current membership", async () => {
         .upload(path, bytes, { contentType: "image/png" })
     ).error,
   );
+  const category = (
+    await service.from("categories").select("id").limit(1).single()
+  ).data;
+  const created = await service
+    .from("posts")
+    .insert({
+      author_id: member.id,
+      category_id: category.id,
+      post_type: "discussion",
+      title: "Photo security fixture",
+      description: "Private photo access test",
+    })
+    .select("id")
+    .single();
+  assert.ifError(created.error);
+  const photo = await service
+    .from("post_photos")
+    .insert({
+      post_id: created.data.id,
+      uploader_id: member.id,
+      object_path: path,
+    })
+    .select("id")
+    .single();
+  assert.ifError(photo.error);
   try {
     assert.ok(
       (await anon.storage.from("community-photos").download(path)).error,
@@ -288,6 +313,8 @@ test("private photo downloads require current membership", async () => {
         .error,
     );
   } finally {
+    await service.from("post_photos").delete().eq("id", photo.data.id);
+    await service.from("posts").delete().eq("id", created.data.id);
     await service.storage.from("community-photos").remove([path]);
   }
 });

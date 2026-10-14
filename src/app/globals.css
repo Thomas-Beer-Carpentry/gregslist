@@ -205,3 +205,274 @@ input {
     margin-top: 24px;
   }
 }
+/* Noticeboard components share the foundation's exact palette. */
+main,
+aside,
+.form-grid > div,
+.filter-grid > div {
+  min-width: 0;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #8d938d;
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--charcoal);
+  margin: 6px 0 18px;
+}
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 24px 0;
+  min-width: 0;
+}
+legend {
+  font-weight: 600;
+  padding: 0 8px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.filters label {
+  margin-top: 0;
+  font-size: 14px;
+}
+.page-header {
+  margin-bottom: 28px;
+}
+.page-header h1 {
+  margin: 8px 0 16px;
+}
+.badge {
+  background: var(--background);
+  border: 1px solid var(--border);
+  color: var(--forest);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 3px 10px;
+}
+.status-fulfilled,
+.status-archived {
+  color: var(--text-muted);
+}
+.status-cancelled {
+  border-color: var(--warm-sand);
+  color: var(--charcoal);
+}
+.post-card h2 {
+  margin: 16px 0 8px;
+  font-size: 24px;
+}
+.post-card h2 a {
+  text-decoration: none;
+}
+.post-card h2 a:hover {
+  text-decoration: underline;
+}
+.post-meta {
+  font-size: 13px;
+}
+.excerpt,
+.post-body {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.post-card,
+.detail,
+.comment {
+  overflow-wrap: anywhere;
+}
+.detail h1 {
+  margin: 20px 0;
+}
+.detail-actions {
+  margin: 24px 0;
+}
+.event-details {
+  background: var(--background);
+  border-left: 4px solid var(--warm-sand);
+  padding: 12px 20px;
+  margin: 24px 0;
+}
+.event-details h2 {
+  margin-top: 8px;
+}
+.button-outline:hover {
+  background: var(--background);
+  color: var(--forest);
+}
+.event-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.event-list li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.event-list li:last-child {
+  border: 0;
+  padding-bottom: 0;
+}
+.event-list a,
+.event-list span,
+.event-list time,
+.event-list small {
+  display: block;
+}
+.event-list time {
+  font-size: 12px;
+  color: var(--sage-teal);
+  font-weight: 600;
+}
+.event-list a {
+  font-weight: 600;
+  text-decoration: none;
+}
+.event-list a:hover {
+  text-decoration: underline;
+}
+.event-list span {
+  font-size: 13px;
+}
+.event-list small {
+  font-size: 11px;
+}
+.comment {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.comment form {
+  margin: 12px 0;
+}
+.comment:last-of-type {
+  margin-bottom: 24px;
+}
+summary {
+  cursor: pointer;
+  color: var(--forest);
+  font-weight: 600;
+  padding: 8px 0;
+}
+.checkbox-label {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 20px 0;
+}
+.checkbox-label input {
+  width: auto;
+  margin: 6px 0;
+  accent-color: var(--forest);
+}
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.photo-grid figure {
+  margin: 0;
+}
+.photo-grid img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.photo-grid button {
+  font-size: 12px;
+  padding: 7px 10px;
+  margin-top: 8px;
+}
+.photo-preview {
+  display: block;
+  max-width: 100%;
+  height: 160px;
+  object-fit: contain;
+  margin: 12px 0;
+  border-radius: 8px;
+}
+.upload-panel {
+  border-top: 1px solid var(--border);
+  margin-top: 24px;
+  padding-top: 12px;
+}
+.upload-panel p {
+  font-size: 13px;
+}
+progress {
+  width: 100%;
+  accent-color: var(--forest);
+}
+.upload-panel [role="status"] {
+  margin: 16px 0;
+}
+.pagination {
+  justify-content: space-between;
+  margin: 24px 0;
+}
+.empty-state {
+  text-align: center;
+  padding: 40px 24px;
+}
+@media (max-width: 640px) {
+  .form-grid,
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .photo-grid {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    margin-bottom: 32px;
+  }
+  .sidebar nav {
+    display: flex;
+  }
+  .sidebar > p:not(.muted) {
+    margin-bottom: 4px;
+  }
+  .detail h1 {
+    font-size: 28px;
+  }
+  .post-card h2 {
+    font-size: 22px;
+  }
+  .event-details {
+    padding: 12px;
+  }
+  .filters {
+    padding: 20px;
+  }
+  .sidebar form {
+    display: inline-block;
+    margin-left: 16px;
+  }
+  .post-form fieldset {
+    padding: 12px;
+  }
+}
