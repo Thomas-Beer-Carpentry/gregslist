@@ -1,0 +1,13 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select plan(8);
+select ok((select relrowsecurity from pg_class where oid='public.posts'::regclass),'Posts enforce RLS');
+select ok((select relrowsecurity from pg_class where oid='public.ride_reservations'::regclass),'Passenger records enforce RLS');
+select ok(not has_table_privilege('anon','public.profiles','select'),'Anonymous role cannot read profiles');
+select ok(not has_table_privilege('authenticated','public.memberships','update'),'Members cannot change their role');
+select ok(not has_table_privilege('authenticated','public.ride_reservations','insert'),'Bookings cannot bypass future transactional APIs');
+select ok(not has_function_privilege('anon','public.issue_invitation(text)','execute'),'Anonymous role cannot issue invitations');
+select is((select count(*)::integer from public.categories),9,'All brief categories seeded');
+select ok(not (select public from storage.buckets where id='community-photos'),'Photos bucket is private');
+select * from finish();
+rollback;

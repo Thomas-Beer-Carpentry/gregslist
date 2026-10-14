@@ -1,0 +1,24 @@
+name: Foundation checks
+on: [push, pull_request]
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --cache /tmp/gregslist-npm
+      - run: npm run format:check
+      - run: npm run build
+      - run: npm run typecheck
+      - run: npm run db:start
+      - run: node scripts/local-env.mjs
+      - run: npm run db:test
+      - run: npm test
+      - run: node scripts/bootstrap-local.mjs
+      - run: npx playwright install --with-deps chromium
+      - run: CHROMIUM_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") npm run test:e2e
+      - if: always()
+        run: npm run db:stop

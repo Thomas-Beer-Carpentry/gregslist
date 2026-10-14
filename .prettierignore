@@ -1,0 +1,7 @@
+node_modules
+.next
+package-lock.json
+PROJECT_BRIEF.md
+.env*
+.local-admin.json
+supabase/.temp
