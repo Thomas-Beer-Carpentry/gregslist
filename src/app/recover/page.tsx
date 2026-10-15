@@ -8,7 +8,7 @@ export default async function Recover({
 }) {
   const { message } = await searchParams;
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <Link href="/login" className="brand">
         gregslist.
       </Link>

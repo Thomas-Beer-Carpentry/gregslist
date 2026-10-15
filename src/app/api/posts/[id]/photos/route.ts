@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import sharp from "sharp";
 import { z } from "zod";
-import { memberSession } from "@/lib/auth";
+import { apiMemberSession } from "@/lib/api-auth";
 import { adminClient } from "@/lib/supabase/admin";
 export const runtime = "nodejs";
 function error(message: string, status = 400) {
@@ -14,9 +14,12 @@ export async function POST(
 ) {
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
-  if (request.headers.get("origin") !== origin)
+  if (
+    !request.headers.has("authorization") &&
+    request.headers.get("origin") !== origin
+  )
     return error("Request origin is not permitted.", 403);
-  const session = await memberSession();
+  const session = await apiMemberSession(request);
   if (!session) return error("Active membership required.", 401);
   const { id } = await params;
   if (!z.uuid().safeParse(id).success) return error("Invalid post.");

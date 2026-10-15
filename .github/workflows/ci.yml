@@ -1,5 +1,7 @@
-name: Foundation checks
+name: Gregslist checks
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   foundation:
     runs-on: ubuntu-latest
@@ -9,17 +11,27 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
       - run: npm ci --cache /tmp/gregslist-npm
+      - run: npm ci --prefix mobile --cache /tmp/gregslist-mobile-npm
       - run: npm run format:check
-      - run: npm run build
-      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run mobile:typecheck
+      - run: npm run mobile:test
+      - run: EXPO_OFFLINE=1 npm run mobile:export
       - run: npm run db:start
       - run: node scripts/local-env.mjs
       - run: npm run db:test
       - run: node scripts/bootstrap-local.mjs
       - run: npm test
       - run: npm run test:admin-concurrency
+      - run: npm run test:privacy-concurrency
+      - run: npm run test:migrations
+      - run: npm run build
+      - run: npm run typecheck
       - run: npx playwright install --with-deps chromium
-      - run: CHROMIUM_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") npm run test:e2e
+      - run: PLAYWRIGHT_PRODUCTION=1 CHROMIUM_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") npm run test:e2e
       - if: always()
         run: npm run db:stop

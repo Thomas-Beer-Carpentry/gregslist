@@ -22,6 +22,7 @@ body {
   color: var(--charcoal);
   font-family: Arial, Helvetica, sans-serif;
   line-height: 1.6;
+  font-size: 1rem;
 }
 a {
   color: var(--forest);
@@ -45,7 +46,7 @@ input {
 }
 .brand {
   font-family: Georgia, serif;
-  font-size: 36px;
+  font-size: 2.25rem;
   letter-spacing: -2px;
   text-decoration: none;
   font-weight: bold;
@@ -60,6 +61,9 @@ nav {
   margin: 32px 0;
 }
 nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding: 8px 12px;
   text-decoration: none;
   border-radius: 8px;
@@ -76,25 +80,32 @@ nav a[aria-current] {
   margin-bottom: 20px;
 }
 .eyebrow {
-  font-size: 12px;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  color: var(--sage-teal);
+  color: var(--deep-green);
   font-weight: bold;
 }
+.card .eyebrow {
+  color: var(--sage-teal);
+}
 h1 {
-  font-size: 36px;
+  font-size: 2.25rem;
   line-height: 1.2;
   letter-spacing: -1px;
+  overflow-wrap: anywhere;
 }
 h2 {
-  font-size: 21px;
+  font-size: 1.3125rem;
   line-height: 1.3;
 }
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  max-width: 100%;
   border: 1px solid var(--forest);
   background: var(--forest);
   color: white;
@@ -103,6 +114,8 @@ h2 {
   text-decoration: none;
   cursor: pointer;
   font-weight: 600;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 .button:hover {
   background: var(--deep-green);
@@ -162,6 +175,15 @@ input {
 .skip:focus {
   left: 16px;
   top: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--surface);
+}
+.sidebar > a:not(.brand) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 .divider {
   border: 0;
@@ -193,10 +215,10 @@ input {
     padding: 8px;
   }
   .brand {
-    font-size: 30px;
+    font-size: 1.875rem;
   }
   h1 {
-    font-size: 30px;
+    font-size: 1.875rem;
   }
   .card {
     padding: 22px;
@@ -217,6 +239,12 @@ input,
 select,
 textarea {
   font: inherit;
+  min-width: 0;
+  max-width: 100%;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+select {
+  min-height: 44px;
 }
 select,
 textarea {
@@ -256,7 +284,7 @@ legend {
 }
 .filters label {
   margin-top: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .page-header {
   margin-bottom: 28px;
@@ -268,7 +296,7 @@ legend {
   background: var(--background);
   border: 1px solid var(--border);
   color: var(--forest);
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 600;
   border-radius: 20px;
   padding: 3px 10px;
@@ -283,7 +311,7 @@ legend {
 }
 .post-card h2 {
   margin: 16px 0 8px;
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 .post-card h2 a {
   text-decoration: none;
@@ -292,7 +320,7 @@ legend {
   text-decoration: underline;
 }
 .post-meta {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .excerpt,
 .post-body {
@@ -343,7 +371,7 @@ legend {
   display: block;
 }
 .event-list time {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--sage-teal);
   font-weight: 600;
 }
@@ -355,10 +383,10 @@ legend {
   text-decoration: underline;
 }
 .event-list span {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .event-list small {
-  font-size: 11px;
+  font-size: 0.6875rem;
 }
 .comment {
   padding: 16px 0;
@@ -374,17 +402,21 @@ summary {
   cursor: pointer;
   color: var(--forest);
   font-weight: 600;
-  padding: 8px 0;
+  padding: 10px 0;
+  min-height: 44px;
 }
 .checkbox-label {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   margin: 20px 0;
+  min-height: 44px;
 }
 .checkbox-label input {
-  width: auto;
-  margin: 6px 0;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 24px;
+  margin: 2px 0;
   accent-color: var(--forest);
 }
 .photo-grid {
@@ -403,7 +435,7 @@ summary {
   border-radius: 8px;
 }
 .photo-grid button {
-  font-size: 12px;
+  font-size: 0.75rem;
   padding: 7px 10px;
   margin-top: 8px;
 }
@@ -421,7 +453,7 @@ summary {
   padding-top: 12px;
 }
 .upload-panel p {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 progress {
   width: 100%;
@@ -457,10 +489,10 @@ progress {
     margin-bottom: 4px;
   }
   .detail h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
   }
   .post-card h2 {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
   .event-details {
     padding: 12px;
@@ -483,7 +515,7 @@ progress {
   margin-top: 24px;
 }
 .attendee-columns h3 {
-  font-size: 16px;
+  font-size: 1rem;
   margin-bottom: 8px;
 }
 .attendee-columns ul {
@@ -500,7 +532,7 @@ progress {
 }
 .event-update h2 {
   overflow-wrap: anywhere;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .status-completed {
   color: var(--text-muted);
@@ -555,6 +587,29 @@ progress {
 }
 .passenger-list {
   padding-left: 20px;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 360px) {
+  .shell,
+  .auth {
+    padding: 16px;
+  }
+  .card {
+    padding: 18px;
+  }
+  fieldset {
+    padding: 12px;
+  }
 }
 @media (max-width: 640px) {
   .ride-card {

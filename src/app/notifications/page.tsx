@@ -28,6 +28,12 @@ export default async function EventUpdates({
       "ride_booking_cancelled",
       "ride_cancelled",
       "ride_completed",
+      "partner_requested",
+      "partner_accepted",
+      "partner_declined",
+      "partner_unlinked",
+      "membership_reactivated",
+      "content_removed",
     ])
     .order("created_at", { ascending: false })
     .order("id", { ascending: false })
@@ -39,7 +45,7 @@ export default async function EventUpdates({
       <p className="eyebrow">Keep your plans in sync</p>
       <h1>Your updates.</h1>
       <p className="muted">
-        The latest 50 event and ride updates for your plans.
+        The latest 50 event, ride and partner updates for your plans.
       </p>
       {message && (
         <p role="status" className="message">
@@ -60,6 +66,9 @@ export default async function EventUpdates({
               {update.post_id && (
                 <Link href={`/posts/${update.post_id}`}>View post</Link>
               )}
+              {update.kind.startsWith("partner_") && (
+                <Link href="/settings/partner">Manage partner link</Link>
+              )}
               {!update.read_at && (
                 <form action={readUpdate}>
                   <input type="hidden" name="id" value={update.id} />
@@ -73,7 +82,7 @@ export default async function EventUpdates({
         <section className="card">
           <h2>You’re up to date.</h2>
           <p className="muted">
-            Relevant event and transport changes will appear here.
+            Relevant event, transport and partner changes will appear here.
           </p>
         </section>
       )}

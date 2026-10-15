@@ -74,7 +74,9 @@ export async function NoticeboardShell({
           <Button variant="outline">Sign out</Button>
         </form>
       </aside>
-      <main id="main">{children}</main>
+      <main id="main" tabIndex={-1}>
+        {children}
+      </main>
       <aside className="upcoming" aria-label="Upcoming events">
         <section className="card">
           <p className="eyebrow">On the horizon</p>

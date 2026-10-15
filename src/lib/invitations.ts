@@ -2,7 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { adminClient } from "@/lib/supabase/admin";
 import { supabase } from "@/lib/supabase/server";
 
@@ -94,6 +94,7 @@ export async function verifyAuthenticationLink(
 export async function sendInvitationEmail(
   email: string,
   context: InvitationContext,
+  authenticationClient?: SupabaseClient,
 ): Promise<{ error: string }> {
   const verification = await adminClient().rpc("invitation_verification", {
     target_invitation: context.id,
@@ -110,7 +111,7 @@ export async function sendInvitationEmail(
     };
   const origin = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   if (record.account_exists && record.account_confirmed) {
-    const db = await supabase();
+    const db = authenticationClient || (await supabase());
     const { error } = await db.auth.signInWithOtp({
       email: record.email,
       options: {

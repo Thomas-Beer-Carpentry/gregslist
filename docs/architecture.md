@@ -81,3 +81,40 @@ No feature is complete until its security and critical workflow tests pass. Dire
 - Redemption binds Auth's confirmed current email to the ledger and locks the invitation. Only ordinary membership is created. Safe same-recipient retries return without another redemption/audit; they never revive inactive membership. An email link for a different signed-in account is rejected before replacing cookies. New/unverified accounts still need working Supabase email delivery; copy delivery replaces administrator outbound delivery, not email ownership verification.
 - Administrative audit entries are generated inside the same transaction, include the true actor and inviting administrator for redemption, and contain safe state/email metadata and name snapshots. Application users, including administrators, cannot insert/update/delete audit entries directly. Only active administrators can read history. Trusted service/operator database access remains privileged. Audit foreign keys use SET NULL for controlled operator deletion without deleting history; no such deletion workflow is exposed.
 - The member directory exposes only active names, biographies and join timestamps, with name search (up to 100 results). Existing profile IDs remain necessary internally for authorship/RSVP/partner APIs but are not rendered by directory cards. Profiles support owner-only validated names and optional 300-character biographies. Avatar upload was not previously implemented and is not added. Admin member search includes protected emails; pending invitations and history have separate paginated views, and audit history shows the latest 50 entries.
+
+# Phase 6 and phone-app scope decisions
+
+The complete Phase 6 brief is retained in `docs/phase-6-brief.md`. Subsequent
+explicit user instructions add a genuine React Native application for **both
+iPhone and Android** and permanent personal-account deletion. Those instructions
+supersede the brief's native-app exclusion and earlier phases' deletion exclusion.
+The user selected immediate deletion, with no undo window, from the proposed
+policy; its remaining twelve-month minimum pseudonymised-history retention is
+preserved. `PROJECT_BRIEF.md` remains the original product reference.
+
+The Next.js application and Supabase database remain authoritative. `mobile/`
+is an independent Expo client with its own SDK-compatible lockfile and TypeScript
+version; root TypeScript remains unchanged. Both clients use the same protected
+post/event/ride/partner/admin RPCs. Native private photos, emailed invitations and
+own-account deletion use explicitly validated Bearer HTTP endpoints. A Bearer
+failure never falls back to a browser cookie. Web sessions use HttpOnly cookies;
+native sessions use chunked, atomic Keychain/Keystore storage. Public signup stays
+disabled. Initial email verification/recovery uses the trusted website.
+
+Erasure requires a fresh password check and server-derived account identity.
+The service-only database transaction immediately removes membership and visible
+personal content, closes arrangements, and records exact Storage paths in an
+RLS-protected job. Auth/Storage operations are retried after transient failure;
+the response distinguishes finished from pending cleanup. Minimum history uses
+a generic profile for up to twelve months and is purged only after provider
+cleanup completes. Provider backups/security logs require separately verified expiry;
+their deletion is not implied by the application transaction. Erased profiles
+cannot be edited. Legacy content writers now use the same transport advisory
+lock before membership/parent locks, preventing queued writes from resurrecting
+personal data after erasure.
+
+The existing in-app notification table also handles partner request outcomes.
+No push-notification service, offline content store, payments or extra social
+features are added. See `docs/deployment.md`, `docs/backup-and-recovery.md` and
+`mobile/README.md` for production/signing prerequisites. JavaScript export success
+does not establish a signed installable phone app or physical-device validation.

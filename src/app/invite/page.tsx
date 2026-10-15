@@ -11,7 +11,7 @@ export default async function Invite({
     ? (await (await supabase()).auth.getUser()).data.user
     : null;
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <section className="card">
         <h1>A place for your people.</h1>
         {message && (

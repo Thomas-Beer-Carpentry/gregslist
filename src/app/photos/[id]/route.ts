@@ -1,11 +1,11 @@
-import { memberSession } from "@/lib/auth";
+import { apiMemberSession } from "@/lib/api-auth";
 import { z } from "zod";
 export const dynamic = "force-dynamic";
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await memberSession();
+  const session = await apiMemberSession(request);
   if (!session)
     return new Response("Active membership required", { status: 401 });
   const { id } = await params;

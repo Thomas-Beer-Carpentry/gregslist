@@ -2,7 +2,7 @@ import { ConfirmationForm } from "./confirmation-form";
 
 export default function Confirm() {
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <section className="card">
         <p className="eyebrow">Your community, privately</p>
         <h1>A secure welcome.</h1>

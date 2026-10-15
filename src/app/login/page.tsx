@@ -8,7 +8,7 @@ export default async function Login({
 }) {
   const { message } = await searchParams;
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <Link className="brand" href="/">
         gregslist<span style={{ color: "var(--sage-teal)" }}>.</span>
       </Link>

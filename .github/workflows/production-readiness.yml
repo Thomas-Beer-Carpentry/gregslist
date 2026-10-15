@@ -1,0 +1,24 @@
+name: Read-only production readiness
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run production:check
+        env:
+          SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+          GREGSLIST_PRODUCTION_SITE_URL: ${{ vars.GREGSLIST_PRODUCTION_SITE_URL }}
+          GREGSLIST_PRODUCTION_SUPABASE_URL: ${{ vars.GREGSLIST_PRODUCTION_SUPABASE_URL }}
+          GREGSLIST_PRODUCTION_PUBLISHABLE_KEY: ${{ vars.GREGSLIST_PRODUCTION_PUBLISHABLE_KEY }}
+          GREGSLIST_PRODUCTION_SERVICE_ROLE_KEY: ${{ secrets.GREGSLIST_PRODUCTION_SERVICE_ROLE_KEY }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

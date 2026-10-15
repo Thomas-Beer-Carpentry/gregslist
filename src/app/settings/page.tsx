@@ -16,7 +16,7 @@ export default async function Settings({
     .single();
   const { message } = await searchParams;
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <Link href="/">← Noticeboard</Link>
       <section className="card">
         <h1>Your account.</h1>
@@ -58,6 +58,12 @@ export default async function Settings({
         </p>
         <p>
           <Link href="/members">Meet your community</Link>
+        </p>
+        <p>
+          <Link href="/privacy">Privacy and data handling</Link>
+        </p>
+        <p>
+          <Link href="/account-deletion">Delete my account</Link>
         </p>
       </section>
     </main>

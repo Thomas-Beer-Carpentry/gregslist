@@ -15,10 +15,19 @@
     "admin:local": "node scripts/bootstrap-local.mjs",
     "test:e2e": "playwright test",
     "test:admin-concurrency": "node scripts/test-admin-concurrency.mjs",
-    "format:check": "prettier --check src scripts tests playwright.config.ts",
+    "test:privacy-concurrency": "node scripts/test-privacy-concurrency.mjs",
+    "format:check": "prettier --check src scripts tests mobile/App.tsx mobile/features mobile/lib mobile/ui.tsx mobile/app.config.ts mobile/tests playwright.config.ts",
     "db:stop": "node scripts/supabase-local.mjs stop",
     "photos:cleanup": "node scripts/cleanup-photos.mjs",
-    "db:migrate": "node scripts/supabase-local.mjs migration up"
+    "db:migrate": "node scripts/supabase-local.mjs migration up",
+    "lint": "oxlint src scripts tests mobile/App.tsx mobile/features mobile/lib mobile/ui.tsx mobile/app.config.ts next.config.ts playwright.config.ts",
+    "test:migrations": "node scripts/test-migrations.mjs",
+    "production:check": "node scripts/production-check.mjs",
+    "production:configure": "node scripts/production-configure.mjs",
+    "mobile:typecheck": "npm --prefix mobile run typecheck",
+    "mobile:test": "npm --prefix mobile test",
+    "mobile:export": "npm --prefix mobile run export",
+    "privacy:cleanup": "node scripts/privacy-cleanup.mjs"
   },
   "engines": {
     "node": ">=22 <25"
@@ -40,11 +49,13 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.64.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "oxlint": "^1.88.0",
     "prettier": "^3.9.10",
     "supabase": "2.120.0",
     "tailwindcss": "^4.3.3",

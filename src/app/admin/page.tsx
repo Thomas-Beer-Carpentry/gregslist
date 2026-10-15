@@ -127,7 +127,7 @@ export default async function Admin({
   );
 
   return (
-    <main id="main" className="administration">
+    <main id="main" tabIndex={-1} className="administration">
       <Link href="/">← Noticeboard</Link>
       <p className="eyebrow">Care for your community</p>
       <h1>Community administration</h1>

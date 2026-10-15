@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "Gregslist · A little closer together",
@@ -6,11 +7,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   referrer: "no-referrer",
 };
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Every HTML response needs its own CSP nonce; never prerender credential pages.
+  await headers();
   return (
     <html lang="en">
       <body>

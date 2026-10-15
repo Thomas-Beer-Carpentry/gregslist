@@ -1,5 +1,12 @@
 "use client";
-import { useActionState, useState, type ChangeEvent } from "react";
+import {
+  useActionState,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { Temporal } from "@js-temporal/polyfill";
 import { SubmitButton } from "@/components/submit-button";
 import { saveRide } from "./actions";
@@ -14,6 +21,11 @@ export function RideForm({
   ride?: Ride;
 }) {
   const [state, action] = useActionState(saveRide, { error: "" });
+  const errorId = useId();
+  const errorMessage = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (state.error) errorMessage.current?.focus();
+  }, [state]);
   const local = (value: string | null | undefined) =>
     value
       ? Temporal.Instant.from(value)
@@ -38,6 +50,7 @@ export function RideForm({
   function field(name: keyof typeof values) {
     return {
       value: values[name],
+      "aria-describedby": state.error ? errorId : undefined,
       onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
         setValues((v) => ({ ...v, [name]: e.target.value })),
     };
@@ -47,11 +60,18 @@ export function RideForm({
     <form
       action={action}
       className="ride-form"
+      aria-describedby={state.error ? errorId : undefined}
       // Action failures must keep checkbox/select choices as well as text fields.
       onReset={(event) => event.preventDefault()}
     >
       {state.error && (
-        <p role="alert" className="message">
+        <p
+          role="alert"
+          className="message"
+          id={errorId}
+          ref={errorMessage}
+          tabIndex={-1}
+        >
           {state.error}
         </p>
       )}

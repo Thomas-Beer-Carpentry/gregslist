@@ -173,6 +173,55 @@ test("ordinary post persists optional coordination and supports multiple drivers
     2,
   );
 });
+test("partner status changes create recipient-private updates without duplicate notices", async () => {
+  const sender = await member("notice-sender");
+  const recipient = await member("notice-recipient");
+  const notices = async (person) => {
+    const result = await person.db
+      .from("notifications")
+      .select("kind,message,recipient_id")
+      .like("kind", "partner_%");
+    assert.ifError(result.error);
+    return result.data;
+  };
+  const request = await sender.db.rpc("request_partner", {
+    target_user: recipient.id,
+  });
+  assert.ifError(request.error);
+  assert.deepEqual(
+    (await notices(recipient)).map((row) => row.kind),
+    ["partner_requested"],
+  );
+  assert.deepEqual(await notices(sender), []);
+  assert.deepEqual(await notices(c), []);
+  assert.ifError(
+    (
+      await recipient.db.rpc("respond_partner", {
+        target_relationship: request.data,
+        decision: "decline",
+      })
+    ).error,
+  );
+  assert.deepEqual(
+    (await notices(sender)).map((row) => row.kind),
+    ["partner_declined"],
+  );
+  const relationship = await link(sender, recipient);
+  assert.ok(
+    (await notices(sender)).some((row) => row.kind === "partner_accepted"),
+  );
+  const before = (await notices(sender)).length;
+  await recipient.db.rpc("respond_partner", {
+    target_relationship: relationship,
+    decision: "accept",
+  });
+  assert.equal((await notices(sender)).length, before);
+  await unlink(sender, relationship);
+  const received = await notices(recipient);
+  assert.ok(received.some((row) => row.kind === "partner_unlinked"));
+  assert.ok(received.every((row) => row.recipient_id === recipient.id));
+  assert.ok(received.every((row) => !row.message.includes("@")));
+});
 test("single booking confirms automatically; idempotency replays exactly and rejects payload reuse", async () => {
   const id = await post(),
     r = await ride(id, 1),

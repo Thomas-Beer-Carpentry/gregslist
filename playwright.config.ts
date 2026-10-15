@@ -10,7 +10,10 @@ export default defineConfig({
     },
   },
   webServer: {
-    command: "npm run dev",
+    command:
+      process.env.PLAYWRIGHT_PRODUCTION === "1"
+        ? "npm run start"
+        : "npm run dev",
     url: "http://localhost:3000/login",
     reuseExistingServer: true,
     timeout: 120000,

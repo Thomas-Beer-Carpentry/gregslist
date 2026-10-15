@@ -1,5 +1,5 @@
 "use client";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useId, useRef, useState } from "react";
 import { SubmitButton } from "@/components/submit-button";
 import { reserveRide } from "./actions";
 import type { BookingReference } from "./model";
@@ -20,6 +20,11 @@ export function BookingForm({
 }) {
   const [mode, setMode] = useState(isDriver ? "partner" : "self");
   const [state, action] = useActionState(reserveRide, { error: "" });
+  const errorId = useId();
+  const errorMessage = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (state.error) errorMessage.current?.focus();
+  }, [state]);
   const selected = current.filter((r) => mode === "both" || r.scope === mode);
   const switching = selected.some((r) => r.ride_id !== rideId);
   const allowed = selected.every((r) => r.ride_id === rideId || r.manageable);
@@ -30,6 +35,7 @@ export function BookingForm({
     <form
       action={action}
       className="booking-form"
+      aria-describedby={state.error ? errorId : undefined}
       // Action failures must keep checkbox/select choices as well as text fields.
       onReset={(event) => event.preventDefault()}
     >
@@ -53,6 +59,7 @@ export function BookingForm({
       <select
         id={`booking-${rideId}`}
         name="booking_mode"
+        aria-describedby={state.error ? errorId : undefined}
         value={mode}
         onChange={(e) => setMode(e.target.value)}
       >
@@ -87,7 +94,13 @@ export function BookingForm({
             : "Book seats"}
       </SubmitButton>
       {state.error && (
-        <p role="alert" className="message">
+        <p
+          role="alert"
+          className="message"
+          id={errorId}
+          ref={errorMessage}
+          tabIndex={-1}
+        >
           {state.error}
         </p>
       )}

@@ -100,7 +100,7 @@ test("administrator email invitation, acceptance, password setup and recovery wo
       await request.get(`http://127.0.0.1:54324/api/v1/message/${id}`)
     ).json();
     const link = content.HTML.match(
-      /href="([^"]+\/auth\/(?:callback|confirm)[^\"]*)"/i,
+      /href="([^"]+\/auth\/(?:callback|confirm)[^"]*)"/i,
     )?.[1]?.replaceAll("&amp;", "&");
     expect(link).toBeTruthy();
     return link!;

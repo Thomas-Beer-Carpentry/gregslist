@@ -40,7 +40,7 @@ export default async function PartnerSettings({
   const other = (r: { user_a: string; user_b: string }) =>
     names.get(r.user_a === user.id ? r.user_b : r.user_a) || "Community member";
   return (
-    <main id="main" className="auth partner-settings">
+    <main id="main" tabIndex={-1} className="auth partner-settings">
       <Link href="/settings">← Account settings</Link>
       <section className="card">
         <h1>Linked partner.</h1>

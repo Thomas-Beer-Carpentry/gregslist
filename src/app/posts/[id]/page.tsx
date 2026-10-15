@@ -184,7 +184,11 @@ export default async function PostDetail({
                     src={`/photos/${photo.id}`}
                     alt={`${post.title} — photo ${index + 1}`}
                     loading="lazy"
+                    decoding="async"
+                    width={640}
+                    height={400}
                   />
+                  <span className="visually-hidden"> (opens in a new tab)</span>
                 </a>
                 {own && (
                   <form action={removePhoto}>

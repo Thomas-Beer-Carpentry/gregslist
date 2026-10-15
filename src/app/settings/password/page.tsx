@@ -16,7 +16,7 @@ export default async function Password({
   if (!user) redirect("/login");
   const { message } = await searchParams;
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <section className="card">
         <p className="eyebrow">Account security</p>
         <h1>Choose your password.</h1>

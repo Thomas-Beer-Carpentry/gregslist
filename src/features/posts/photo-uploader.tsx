@@ -75,7 +75,7 @@ export function PhotoUploader({
   return (
     <form onSubmit={submit} className="upload-panel">
       <label htmlFor="photo">Add a photo</label>
-      <p className="muted">
+      <p id="photo-help" className="muted">
         JPEG, PNG or WebP, up to 5 MB. {count}/6 photos. Location metadata is
         removed.
       </p>
@@ -84,6 +84,7 @@ export function PhotoUploader({
         id="photo"
         type="file"
         accept="image/jpeg,image/png,image/webp"
+        aria-describedby={message ? "photo-help photo-feedback" : "photo-help"}
         disabled={progress !== null || count >= 6}
         onChange={(e) => {
           setFile(e.target.files?.[0] || null);
@@ -95,6 +96,9 @@ export function PhotoUploader({
           className="photo-preview"
           src={preview}
           alt="Selected photo preview"
+          width={320}
+          height={160}
+          decoding="async"
         />
       )}
       {progress !== null && (
@@ -110,7 +114,7 @@ export function PhotoUploader({
         </div>
       )}
       {message && (
-        <p role="status" className="message">
+        <p id="photo-feedback" role="status" className="message">
           {message}
         </p>
       )}

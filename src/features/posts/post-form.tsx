@@ -1,5 +1,12 @@
 "use client";
-import { useActionState, useState, type ChangeEvent } from "react";
+import {
+  useActionState,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import { savePost } from "./actions";
 import {
   POST_TYPES,
@@ -29,6 +36,11 @@ export function PostForm({
 }) {
   const [kind, setKind] = useState(post?.post_type || "discussion");
   const [state, action] = useActionState(savePost, { error: "" });
+  const errorId = useId();
+  const errorMessage = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    if (state.error) errorMessage.current?.focus();
+  }, [state]);
   const [ridesEnabled, setRidesEnabled] = useState(
     post?.ride_coordination_enabled || false,
   );
@@ -53,6 +65,7 @@ export function PostForm({
   function field(name: keyof typeof values) {
     return {
       value: values[name],
+      "aria-describedby": state.error ? errorId : undefined,
       onChange: (
         e: ChangeEvent<
           HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -64,11 +77,18 @@ export function PostForm({
     <form
       action={action}
       className="post-form"
+      aria-describedby={state.error ? errorId : undefined}
       // Action failures must keep checkbox/select choices as well as text fields.
       onReset={(event) => event.preventDefault()}
     >
       {state.error && (
-        <p className="message" role="alert">
+        <p
+          className="message"
+          role="alert"
+          id={errorId}
+          ref={errorMessage}
+          tabIndex={-1}
+        >
           {state.error}
         </p>
       )}

@@ -18,7 +18,7 @@ export default async function AccessDenied() {
     .maybeSingle();
   const status = membership?.status;
   return (
-    <main id="main" className="auth">
+    <main id="main" tabIndex={-1} className="auth">
       <section className="card">
         <p className="eyebrow">Your private community</p>
         <h1>Access is unavailable.</h1>
@@ -36,6 +36,9 @@ export default async function AccessDenied() {
         ) : (
           <Link href="/invite">Invitation help</Link>
         )}
+        <p>
+          <Link href="/account-deletion">Delete my account</Link>
+        </p>
         <form action={logout}>
           <SubmitButton variant="outline">Sign out</SubmitButton>
         </form>
